@@ -1,0 +1,80 @@
+.parent{
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.main{
+    width: 400px;
+    height: auto;
+    border-radius: 15px;
+    background-color: white;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 0 4px 0 black;
+    position: relative;
+    padding:20px;
+}
+.groupParent{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.group{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin : 15px 0
+}
+.group p {
+    font-family: iransansweb;
+    margin-right: 10px;
+    width: 50%;
+}
+.group input{
+    width: 100%;
+    border-radius: 5px;
+    height: 35px;
+    border: 1px solid gray;
+    padding :0 10px;
+    outline: none;
+}
+.submit{
+
+    padding :10px 20px ;
+    border-radius: 5px;
+    background-color: rgba(0, 128, 0, 0.192);
+    border: 1px solid green;
+    box-shadow: 0 0 2px 0 green;
+    margin-top: 10px;
+    cursor: pointer;
+}
+.closeParent{
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: flex-end;
+}
+.close {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    border: none;
+    background-color: rgba(255, 0, 0, 0.37);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
