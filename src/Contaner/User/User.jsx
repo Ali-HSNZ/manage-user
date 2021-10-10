@@ -3,36 +3,77 @@ import Styles from './User.module.css'
 import ShowUser from '../../Components/ShowUser/ShowUser';
 import SeeMore from '../../Components/See More Btn/SeeMore';
 import AddNewUser from '../../Components/Add New User/AddNewUser';
-import axios from 'axios';
+
+import {toast } from 'react-toastify';
+import getAllUser from '../../services/dataService/GetAllUser';
+import DeleteUser from '../../services/dataService/DeleteUser';
+import Loding from '../../Components/Loding/Loding';
 const User = () => {
 
     const [seeMore,setSeeMore] =  useState(false);
     const [addUser , setAddUser] = useState(false);
+    
+    const [error , setError] = useState(false)
 
     const [user , setUser] = useState(null)
 
     const [userId , setUserId] = useState(null)
 
+
 // get All Data
     useEffect(()=> {
-        axios.get('http://localhost:3000/user').then((respanse)=>{
-            setUser(respanse.data)
-        }).catch(error => alert(error))
+        const getAllData = async()=> {
+
+            try {
+                const {data} = await getAllUser()
+                setUser(data)
+            } catch (error) {
+                setError({massage : "Loading Data Error"})      
+                toast.error(error.massage) 
+            }
+           
+        }
+        getAllData()
     },[])
 
     const deleteHandler = (getDeletedID)=> {
         if(getDeletedID){
 
-            console.log("Deleted ID : ",getDeletedID)
-
-            axios.delete(`http://localhost:3000/user/${userId}`).then(()=>{
-                axios.get("http://localhost:3000/user").then((respanse)=>{
-                    setUser(respanse.data)
+            try {
+                const deleteUser = async () => {
+                    await DeleteUser(userId)
+                    toast.success(`${getDeletedID.first_name} ${getDeletedID.last_name} Removed`)
+                    const {data} = await getAllUser()
+                    setUser(data)
                     setSeeMore(false)
-                }).catch()
-            }).catch()
+                }
+                deleteUser()
+            } catch (error) {
+                toast.error(error)
+            }
+        
         }
-     
+    }
+    error && toast.error(error.massage)
+   
+    const renderShowUser = ()=> {
+
+        let returnValue = <Loding/>
+
+        if(user && !error){
+            returnValue = user.map((user) =>{
+                return (
+                    <ShowUser
+                        key={user.id} 
+                        Fname={user.first_name} 
+                        Lname={user.last_name} 
+                        imgSrc={user.avatar} 
+                        Handler= {()=> { return( setUserId(user.id), setSeeMore(true))}}
+                    />
+                )
+            })
+        }
+        return returnValue;
     }
 
     
@@ -48,34 +89,16 @@ const User = () => {
                 <div className={Styles.addUser_parent}>
                     <button  
                         className={Styles.addUser} 
-                        onClick={()=>setAddUser(true)}>
+                        onClick={   ()=>setAddUser(true)    }>
                         Add New User
                     </button>
                 </div>
 
-                <div className={Styles.user_parent}>
-                    {user ? user.map((user) =>{return <ShowUser
-                        key={user.id} 
-                        Fname={user.first_name} 
-                        Lname={user.last_name} 
-                        imgSrc={user.avatar} 
-                        Handler= {()=> {return setUserId(user.id) , setSeeMore(true)}}
-                        />}
-                    )
-                    :
-                        <p style={{
-                                color : 'green' , 
-                                fontFamily:'iransansweb',
-                                textAlign:'center' , 
-                                backgroundColor:"#90ff8c" , 
-                                width : '100%',
-                                padding : "15px 0"
-                            }}>
-                                Loading Data... please wait
-                            </p>}
-                </div>
+                <div className={Styles.user_parent}>{   renderShowUser()    }</div>
+
             </div>
         </div>
+
     );
 }
  

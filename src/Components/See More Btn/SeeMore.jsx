@@ -1,25 +1,31 @@
 import Styles from "../../Contaner/User/User.module.css"
 import { AiOutlineClose } from "react-icons/ai";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import defualtImage from '../../image/default Image.jpg'
+import GetOneUser from "../../services/dataService/GetOneUser";
+import Loding from '../../Components/Loding/Loding';
+
 
 const SeeMore = ({setSeeMore , userId , deleteHandler}) => {
 
     const [selectedId , setSelectedId] = useState(null)
 
-
+    console.log(selectedId)
 
     useEffect(()=>{
         if(userId){
-            axios.get(`http://localhost:3000/user/${userId}`).then(respanse => setSelectedId(respanse.data)).catch()
+            const getUserInformation = async()=>{
+                try {
+                    const {data} = await GetOneUser(userId)
+                    setSelectedId(data)
+                } catch (error) {
+                    alert(error)
+                }
+            }
+            getUserInformation()
         }
        
     },[])
-
-
-
-    selectedId && console.table(selectedId.first_name)
 
     return (  
         <div className={Styles.seeMoreButton_blackColor_parent}>
@@ -44,13 +50,13 @@ const SeeMore = ({setSeeMore , userId , deleteHandler}) => {
                         <button className={Styles.seeMoreButton_close}  onClick={()=> setSeeMore(false)}>
                             <AiOutlineClose size='18' />
                         </button>
-                        <button className={Styles.seeMoreButton_delete} onClick={()=>deleteHandler(selectedId.id)}>delete</button>
+                        <button className={Styles.seeMoreButton_delete} onClick={()=>deleteHandler(selectedId)}>delete</button>
                     </div>
 
                     
                     </>
                     :
-                    <h3>Loding...</h3>
+                    <Loding/>
                 }
             </div>
         </div>

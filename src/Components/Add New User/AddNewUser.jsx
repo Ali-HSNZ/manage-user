@@ -1,42 +1,49 @@
 import Styles from './AddNewUser.module.css'
+
 import { AiOutlineClose } from "react-icons/ai";
 import { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
+import { toast } from 'react-toastify';
+
+import getAllUser from '../../services/dataService/GetAllUser';
+import PostUser from '../../services/dataService/PostUser';
 
 const AddNewUser = ({setAddUser , setUser , user}) => {
 
     const nameInput = useRef()
 
-    
+    useEffect(()=>{
+        nameInput.current.focus()
+    },[])
+
     const [newUser , setNewUser] = useState({
         first_name : '',
         last_name : '',
         email : '',
     })
-    const [errorList , setErrorList] = useState(false)
-
-    useEffect(()=>{
-        nameInput.current.focus()
-    },[])
-
     const changeHandler = (e)=> {
         setNewUser({...newUser , [e.target.name] : e.target.value })
     }
 
-    const addUserHandler = (e)=> {
-        e.preventDefault()
+    const addUserHandler = ()=> {
+       
         const emailHandler = user.find(item => item.email === newUser.email)
 
-
         if(emailHandler === undefined){
-            axios.post("http://localhost:3000/user/" ,newUser).then(()=>{
-                axios.get("http://localhost:3000/user").then(newUser => {
+
+            const AddUser = async ()=>{
+                try {
+                    await PostUser(newUser)
+                    const {data} = await getAllUser()
+                    setUser(data)
                     setAddUser(false)
-                    setUser(newUser.data)
-            })
-            }).catch()
+                    toast.success(`${newUser.first_name} ${newUser.last_name} Added`)
+                } catch (UserError) {
+                    toast.error(UserError)
+                }
+            }
+            AddUser()
         }else{
-            alert("ایمیل تکراری است")
+            toast.warn(`email has already exist`)
             setAddUser(true)
         }
       
@@ -46,14 +53,12 @@ const AddNewUser = ({setAddUser , setUser , user}) => {
 
 
     return (  
-        <form className={Styles.parent} onSubmit={addUserHandler} >
+        <div className={Styles.parent} >
             <div className={Styles.main}>
 
                 <div className={Styles.closeParent}>
                     <button className={Styles.close}  onClick={()=> setAddUser(false)}><AiOutlineClose size='18' /></button>
                 </div>    
-                
-
                 <div className={Styles.groupParent}>
                     <div className={Styles.group}>
                         <input type="text" ref={nameInput} placeholder ="Enter Your Name ..." name="first_name" onChange={changeHandler}/>
@@ -67,11 +72,10 @@ const AddNewUser = ({setAddUser , setUser , user}) => {
                
                 </div>
                
-                <button type='submit' className={Styles.submit}>Submit</button>
+                <button className={Styles.submit} onClick={addUserHandler}>Submit</button>
                         
-                    
             </div>
-        </form>
+        </div>
     );
 }
  
