@@ -5,4 +5,4 @@
 json-server --watch data/db.json --port 3000
 4. Run Project with Code : 
 npm start
-tips : Project url : http://localhost:3001/
+5. tips : Project url : http://localhost:3001/
